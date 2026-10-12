@@ -26,11 +26,12 @@ jobs:
         with:
           node-version: ${{ matrix.node-version }}
           cache: 'npm'
-      - name:  Install
-        run:   |
-                if [ "$RUNNER_OS" == "Linux" ]; then
-                      sudo apt-get install -y libsdl-pango-dev libgif-dev
-                fi
+      - name: Install
+        run: |
+          if [ "$RUNNER_OS" == "Linux" ]; then
+            sudo apt-get update
+            sudo apt-get install -y --no-install-recommends libsdl-pango-dev libgif-dev
+          fi
         shell: bash
       - name: Install node_modules
         working-directory: ./
