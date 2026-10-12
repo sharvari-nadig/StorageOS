@@ -60,7 +60,14 @@ export class FavoritesState {
                         }
 
                         try {
-                            const result = JSON.parse(stdout.trim())
+                            const output = (stdout || '').trim()
+
+                            if (!output) {
+                                resolve([])
+                                return
+                            }
+
+                            const result = JSON.parse(output)
                             const disks = Array.isArray(result) ? result : [result]
 
                             const drives = disks.map((disk) => {
