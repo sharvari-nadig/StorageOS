@@ -130,7 +130,7 @@ export default [
             plugins: [
                 new ForkTsCheckerWebpackPlugin(),
                 new HtmlWebpackPlugin({
-                    title: 'React-Explorer',
+                    title: 'StorageOS',
                     template: 'index.html',
                 }),
                 new DefinePlugin({

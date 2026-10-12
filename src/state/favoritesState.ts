@@ -1,4 +1,5 @@
 import { IconName } from '@blueprintjs/core'
+import child_process = require('child_process')
 import { IconNames } from '@blueprintjs/icons'
 import { observable, runInAction } from 'mobx'
 import { isMac, isWin } from '$src/utils/platform'
@@ -48,6 +49,44 @@ export class FavoritesState {
     }
 
     async getDrivesList(): Promise<Drive[]> {
+        if (process.platform === 'win32') {
+            return new Promise((resolve, reject) => {
+                child_process.exec(
+                    'powershell -NoProfile -Command "Get-CimInstance Win32_LogicalDisk | Where-Object {$_.DriveType -eq 3} | Select-Object DeviceID,Size,FreeSpace | ConvertTo-Json -Compress"',
+                    (error, stdout) => {
+                        if (error) {
+                            reject(error)
+                            return
+                        }
+
+                        try {
+                            const result = JSON.parse(stdout.trim())
+                            const disks = Array.isArray(result) ? result : [result]
+
+                            const drives = disks.map((disk) => {
+                                const blocks = Number(disk.Size)
+                                const available = Number(disk.FreeSpace)
+                                const used = blocks - available
+
+                                return {
+                                    filesystem: 'Local Disk',
+                                    blocks,
+                                    used,
+                                    available,
+                                    capacity: blocks > 0 ? `${((used / blocks) * 100).toFixed(1)}%` : '0%',
+                                    mounted: disk.DeviceID,
+                                } as Drive
+                            })
+
+                            resolve(drives.filter(filterSystemDrive))
+                        } catch (parseError) {
+                            reject(parseError)
+                        }
+                    },
+                )
+            })
+        }
+
         const drives = await nodeDiskInfo.getDiskInfo()
         return drives.filter(filterSystemDrive)
     }

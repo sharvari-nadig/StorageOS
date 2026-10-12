@@ -21,12 +21,14 @@ interface SideViewProps {
 
 export const SideView = observer(({ hide, viewState }: SideViewProps) => {
     const { appState } = useStores('appState')
+
     const [{ isOver, canDrop }, drop] = useDrop(
         () => ({
             accept: 'file',
             canDrop: ({ fileState }: DraggedObject) => {
                 const sourceViewId = fileState.viewId
                 const fileCache = viewState.getVisibleCache()
+
                 return viewState.viewId !== sourceViewId && fileCache.status !== 'busy' && !fileCache.error
             },
             drop: (item) => appState.drop(item, viewState.getVisibleCache()),
@@ -42,6 +44,7 @@ export const SideView = observer(({ hide, viewState }: SideViewProps) => {
 
     const onClose = (): void => {
         const fileCache = viewState.getVisibleCache()
+
         // doesn't work: it keeps the previous fs
         fileCache.revertPath()
     }

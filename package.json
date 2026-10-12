@@ -1,10 +1,10 @@
 {
-    "name": "react-explorer",
+    "name": "storage-os",
     "version": "4.0.0-rc.1",
     "description": "Plugin-based file explorer written with React",
     "main": "build/main.js",
     "build": {
-        "productName": "React-Explorer",
+        "productName": "StorageOS",
         "appId": "reactexplorer",
         "mac": {
             "identity": "Nicolas Ramz",
@@ -63,6 +63,7 @@
     },
     "license": "MIT",
     "devDependencies": {
+        "@electron/rebuild": "^4.2.0",
         "@swc/core": "^1.3.10",
         "@testing-library/jest-dom": "^5.16.5",
         "@testing-library/react": "^16.3.0",
@@ -73,6 +74,7 @@
         "@types/jest": "^24.0.18",
         "@types/mock-fs": "^4.10.0",
         "@types/node": "^12.0.0",
+        "@types/sql.js": "^1.4.11",
         "@types/webpack": "^4.41.23",
         "@types/webpack-env": "^1.18.8",
         "@typescript-eslint/eslint-plugin": "^5.42.1",
@@ -139,6 +141,7 @@
         "react-dnd-html5-backend": "^14.1.0",
         "react-doc-viewer": "github:warpdesign/react-doc-viewer#bc2e5713018269634c6b3456b29326ebb01d7003",
         "react-dom": "^18.3.1",
-        "react-i18next": "^15.5.2"
+        "react-i18next": "^15.5.2",
+        "sql.js": "^1.14.2"
     }
 }

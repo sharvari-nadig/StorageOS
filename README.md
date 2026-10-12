@@ -1,179 +1,218 @@
-# Cross-platform File manager for Windows, Mac, Linux
+# StorageOS: Intelligent Storage Management
 
-![master Tests](https://github.com/warpdesign/react-explorer/actions/workflows/github-actions-tests.yml/badge.svg?branch=master)
+**An AI-powered desktop application for intelligent file discovery, storage visualization, and duplicate-file analysis.**
 
-![React-Explorer](./img/react-explorer-theme.png)
+## 1. Project Overview
 
-## Features
+StorageOS is an intelligent desktop storage management application designed to simplify how users explore, analyze, and manage files on their local systems. By combining interactive storage visualization, advanced file filtering, duplicate detection, and a locally integrated AI assistant, StorageOS transforms conventional file browsing into a more structured and accessible storage-analysis experience.
 
-- Split-view window
-- Tabs support
-- Media File Preview
-- Fully keyboard controlled
-- Fully localized
-- Dark Mode with automatic detection
-- Open a terminal from any folder
-- Plugin-based filesystem support
-- WSL integration (Windows)
+Built using Electron, React, and TypeScript, the application brings together desktop-level file-system access and a modern user interface. Its local AI integration enables users to ask natural-language questions about indexed files, making file discovery and storage analysis more intuitive.
 
-## Feature tour
+The primary objective of StorageOS is to help users understand how their storage is utilized, locate relevant files efficiently, identify redundant data, and make better-informed storage-management decisions.
 
-### Trully Cross-platform
+## 2. Key Features
 
-React-Explorer is available on every major operating systems & architectures:
+### Intelligent Storage Visualization
+- Interactive treemap for visualizing indexed storage by file category and folder.
+- Storage summaries displaying indexed file counts and total indexed storage.
+- Folder-level navigation and contextual file exploration.
+- Visual representation of storage distribution to help identify space-intensive categories.
 
- - Windows x64, AARCH64
- - Linux x64, AARCH64
- - macOS x64, AARCH64
+### Advanced File Search and Filtering
+- Search indexed files using filenames, keywords, extensions, and file paths.
+- Filter results by minimum and maximum file size.
+- Filter by file extension and modification date.
+- Combine search terms and filters to narrow down relevant results.
 
-### Builtin media file preview
+### AI-Powered Storage Assistant
+- Natural-language interaction for storage-related queries.
+- Search for files using filenames, keywords, and common extensions.
+- Identify large files and files that have not been modified recently.
+- Retrieve relevant file metadata, including category, size, and location.
+- Open matching files directly from search results.
+- Local language-model integration through Ollama and Qwen3 1.7B.
 
-Pressing the `space` bar when a file is selected will open the media preview.
-If the file format is supported, it will be displayed without needing any additional
-library:
+### Duplicate File Detection
+- Identify potential duplicate candidates by grouping files with matching sizes.
+- Verify duplicate content using SHA-256 hashing.
+- Display duplicate groups and potential storage savings.
+- Report scan progress during duplicate analysis.
+- Allow users to select duplicate copies for removal.
+- Move selected files to the Windows Recycle Bin through the Electron shell integration.
 
-![media-preview](./img/media-preview.gif)
+### Desktop Application Integration
+- Native Windows desktop experience powered by Electron.
+- React-based interface with TypeScript for structured development.
+- Local metadata persistence using SQLite-compatible storage through sql.js.
+- Electron IPC communication between the renderer and main processes.
+- File-system scanning and metadata retrieval for indexed storage analysis.
 
+## 3. Technology Stack
 
-### Dark theme automatic detection (macOS Mojave)
+| Technology | Purpose |
+|---|---|
+| Electron | Desktop application framework and operating-system integration |
+| React | Component-based user interface |
+| TypeScript | Type-safe application development |
+| sql.js | Local SQLite-compatible metadata storage |
+| Node.js | Backend operations and file-system processing |
+| Ollama | Local language-model runtime |
+| Qwen3 1.7B | Natural-language query interpretation |
+| Webpack | Application bundling and build workflow |
+| SHA-256 | Duplicate-file content verification |
 
-React-Explorer will automatically switch to dark-theme when it's detected:
+## 4. System Architecture
 
-![dark-theme](./img/feature-darktheme.gif)
+StorageOS follows a desktop architecture that separates the user interface, application logic, and persistent metadata.
 
-### Create and read folder
+**Renderer Layer**
+- Displays the dashboard, storage treemap, file filters, duplicate results, and AI assistant.
+- Collects user queries and presents results.
 
-By pressing `ctrl` (Linux/Win) or `cmd` the folder you create will be automatically read:
+**Electron Main Process**
+- Handles operating-system interactions and IPC requests.
+- Coordinates folder scanning, file opening, and duplicate-file operations.
+- Connects renderer requests to storage and assistant logic.
 
-![create-read-folder](./img/feature-read-folder.gif)
+**Storage and Metadata Layer**
+- Maintains indexed file metadata, including names, paths, sizes, categories, extensions, and modification timestamps.
+- Supports retrieval and analysis of indexed files.
+- Persists metadata in a local database.
 
-### Create nested folders
+**Local AI Layer**
+- Uses Ollama to communicate with the Qwen3 1.7B language model.
+- Interprets natural-language questions that are not handled by dedicated storage-query rules.
+- Works alongside deterministic application logic for storage-specific operations.
 
-You can create several folders at once by separating them with a forward-slash:
+## 5. How It Works
 
-![nested-folders](./img/feature-nested-folders.gif)
+1. **Select and scan:** Choose a folder to analyze.
+2. **Index metadata:** Collect file information and save it in the local database.
+3. **Analyze storage:** Explore indexed files using category visualization and filters.
+4. **Ask questions:** Use the AI assistant to search for files and request storage insights.
+5. **Detect duplicates:** Compare candidate files by size and verify content with SHA-256.
+6. **Take action:** Open matching files or review selected duplicates for removal.
 
-### Quick access to parent folders
+## 6. Installation and Setup
 
-By right-clicking on a tab's icon you can quickly get access to the parents of the currend folder:
+### Prerequisites
+- Windows operating system.
+- Node.js and npm.
+- Ollama installed locally.
+- The `qwen3:1.7b` model downloaded through Ollama for local AI functionality.
 
-![parent-folders](./img/feature-rightclick-icon.gif)
+### Step 1: Clone or Download the Project
 
-### WSL support
-
-React-Explorer will automatically detect and show the list of Linux distributions installed using WSL on Windows:
-
-![wsl-support](./img/feature-wsl.jpg)
-
-## Requirements
-
-React-Explorer works on any modern **Windows**, **Mac** or **Linux** **64bit** computer.
-
-## Building for local development
-
-In order to build React-Explorer you need to have installed `nodejs`.
-
-Once installed, building React-Explorer is as easy as typing:
-
-```shell
-npm install && npm run build
+```bash
+git clone <your-repository-url>
+cd storage-manager
 ```
 
-This will build a development package.
+If the project is already on your computer, open its root directory in a terminal.
 
-In order to run in locally without having to create a native executable, you can then type:
+### Step 2: Install Dependencies
 
-```shell
-npx electron ./build/main.js
-```
-
-## Building binary packages
-
-In order to build binary packages, simply type the following:
-
-```shell
-npm run dist
-```
-
-This will build packaged binaries of React Explorer into the `dist` folder for every supported platform.
-
-React-Explorer can also be built for a single patform. For example, to build only the Windows binaries, type:
-
-```shell
-npm run dist-win
-```
-
-## Localization
-
-React-Explorer is fully localized using `.json` files. Right now, English and French are available.
-
-Adding a new language to React-Explorer is easy: simply duplicate one of the file found in [src/locale/lang](https://github.com/warpdesign/react-explorer/tree/master/src/locale/lang) directory.
-
-The new file should have the name `code.json` where code is a valid language code, for example: `ja.json` to add support for Japanese.
-
-## Tests
-
-### Unit testing
-
-React-Explorer has both unit tests (using Jest) and end to end tests (using Cypress).
-
-To run unit tests simply type:
-
-```shell
-npm test
-```
-
-This will start Jest and run every spec files found in src. Every test file can be found next to the component it is testing.
-
-### End to End testing
-
-End to end tests are using Cypress and are in the separate `e2e` directory. You must install & configure Cypress before running E2E tests. This needs to be done one once using the following commands:
-
-```shell
-cd e2e && npm install && cd ..
-```
-
-The first time you run the tests, you also need to install cypress dependencies:
-
-```shell
+```bash
 npm install
 ```
 
-Since end to end tests need to run Electron-Explorer outside of Electron, a special build needs to be created that stubs some Electron APIs. To create this build, simply type:
+### Step 3: Download the Local AI Model
 
-```shell
+```bash
+ollama pull qwen3:1.7b
+```
+
+Ensure the Ollama service is running before testing AI responses.
+
+### Step 4: Build the Application
+
+```bash
 npm run build
 ```
 
-This will create a new Electron-Explorer in the `build-e2e` directory.
+Wait for Webpack compilation and TypeScript checking to complete successfully.
 
-You may also type `npm run watch` if you want to rebuild automatically the e2e build after a change has been detected inside the sources.
+### Step 5: Launch StorageOS
 
-For React-Explorer to run without Electron, a local webserver needs to be started before running the tests:
-
-```shell
-npm run server
+```bash
+npx electron .
 ```
 
-Now, simply type: `npm run cypress:run` or `npm run cypress:open`.
+## 7. Usage Guide
 
-## How to develop a new Plugin
+1. Launch StorageOS.
+2. Open the Analyze section and scan a folder to index its files.
+3. Explore storage distribution through the treemap.
+4. Apply search terms and advanced filters to find specific files.
+5. Open AI Assistant and ask questions such as:
+   - `Find my PDF files`
+   - `Show my 10 largest files`
+   - `Find files larger than 100 MB`
+   - `Which files have not been modified recently?`
+6. Open Duplicate Files to scan a folder and review detected duplicates.
+7. Review files carefully before moving any selected duplicates to the Recycle Bin.
 
-React-Explorer has been written so that it can easily be extended using plugins.
+## 8. Security and Privacy Considerations
 
-As a starting point you may use the `FsGeneric` skeleton.
+- File metadata is stored locally by the application.
+- The language model runs locally through Ollama, avoiding the need for a paid hosted LLM API for the configured assistant workflow.
+- File deletion actions should be reviewed carefully before confirmation.
+- File discovery and analysis depend on which folders have been indexed.
+- Local AI responses may be imperfect; verify important results before acting on them.
 
-## Acknowledgments
+## 9. Current Scope and Limitations
 
-React-Explorer makes use of the following libraries/components:
+- Storage analysis operates on indexed file metadata and may not reflect unindexed folders.
+- Natural-language interpretation depends on the installed local language model and application query handling.
+- AI-generated explanations are not guaranteed to be correct.
+- Performance depends on the computer's available memory, processor, and storage.
+- Cloud synchronization, automated backup and restore, and automatic storage cleanup are outside the currently implemented scope.
 
-- [React](https://reactjs.org)
-- [Electron](https://electron.s.org)
-- [TypeScript](https://typescriptlang.org)
-- [MobX](https://mobx.js.org)
-- [Blueprintjs](https://blueprintjs.com)
-- [i18next](https://i18next.com) & [react-i18n](https://github.com/i18next/react-i18next)
+## 10. Future Enhancements
 
-## Licence
+Potential future improvements include:
+- More robust semantic file search.
+- Smart storage recommendations based on usage patterns.
+- Configurable indexing schedules and incremental scanning.
+- Improved file organization suggestions.
+- Exportable storage reports and analysis summaries.
+- Additional safeguards and audit information for file-management actions.
 
-React-Explorer is licenced under the MIT licence.
+## 11. Project Objective
+
+StorageOS demonstrates how desktop application development, file-system processing, local metadata persistence, cryptographic hashing, interactive visualization, and local language models can be combined into a unified storage-management solution.
+
+The project aims to make file discovery more accessible, storage utilization easier to understand, and duplicate-file analysis more efficient through an intuitive desktop experience.
+
+## 12. License and Attribution
+
+This project extends the upstream `react-explorer` project. Retain the original license, copyright notices, and required attribution, and document additional modifications according to the applicable license terms.
+
+---
+
+**StorageOS: Intelligent Storage Management**
+*Making local storage easier to explore, understand, and manage.*
+
+---
+
+## 13. Application Screenshots
+
+### Dashboard
+![StorageOS Dashboard](src/components/screenshots/dashboard.png.png)
+
+### Storage Treemap
+![Storage Treemap](src/components/screenshots/storage-treemap.png.png)
+
+### AI-Powered Storage Assistant
+![StorageOS AI Assistant](src/components/screenshots/ai-assistant.png.png)
+
+### Duplicate File Detection
+![Duplicate File Detection](src/components/screenshots/duplicate-detection.png.png)
+
+## License and Attribution
+
+StorageOS extends the open-source [react-explorer](https://github.com/warpdesign/react-explorer) project, originally developed by Nicolas Ramz and distributed under the MIT License.
+
+StorageOS includes original enhancements and modifications, including storage visualization, duplicate-file detection, advanced file filtering, and a locally powered AI storage assistant.
+
+The original copyright notice and MIT License terms are retained in the `LICENSE` file. Additional contributions are provided subject to the applicable license terms.

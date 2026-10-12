@@ -253,7 +253,7 @@
             "RELOAD_VIEW": "सक्रिय दृश्य पुनः लोड करें",
             "FORCE_RELOAD_APP": "फोर्स रीलोड ऐप",
             "KEYBOARD_SHORTCUTS": "कीबोर्ड नक्शा",
-            "ABOUT_TITLE": "रियेक्ट-एक्स्प्लोरर",
+            "ABOUT_TITLE": "StorageOS",
             "ABOUT_CONTENT": "वर्शन ${version}\nकमिट: ${hash}\nतारीख: ${date}\nइलेक्ट्रान: ${electron}\nक्रोम: ${chrome}\nनोड: ${node}\nऑपरेटिंग सिस्टम: ${platform} ${arch} ${release}",
             "ZOOM": "ज़ूम",
             "MINIMIZE": "मिनीमाइज",
