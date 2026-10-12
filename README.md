@@ -1,5 +1,7 @@
 # StorageOS: Intelligent Storage Management
 
+*Making local storage easier to explore, understand, and manage.*
+
 **An AI-powered desktop application for intelligent file discovery, storage visualization, and duplicate-file analysis.**
 
 ## 1. Project Overview
@@ -187,13 +189,6 @@ The project aims to make file discovery more accessible, storage utilization eas
 ## 12. License and Attribution
 
 This project extends the upstream `react-explorer` project. Retain the original license, copyright notices, and required attribution, and document additional modifications according to the applicable license terms.
-
----
-
-**StorageOS: Intelligent Storage Management**
-*Making local storage easier to explore, understand, and manage.*
-
----
 
 ## 13. Application Screenshots
 
