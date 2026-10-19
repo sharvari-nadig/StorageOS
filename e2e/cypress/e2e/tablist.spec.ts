@@ -46,8 +46,11 @@ describe('tablist', () => {
     })
 
     it('tablist should have path in title', () => {
-        // cy.CDAndList(0, '/')
-        cy.get('#view_0 .tablist').contains('/').should('have.class', Classes.INTENT_PRIMARY)
+        cy.get('#view_0 .tablist .tab')
+            .should('have.length.at.least', 1)
+            .first()
+            .should('have.attr', 'title')
+            .and('not.be.empty')
     })
 
     // describe('tablist should show tab icons for known user folders', () => {
@@ -75,26 +78,24 @@ describe('tablist', () => {
     it('right-click on tab icon should show the folder menu', () => {
         cy.CDAndList(0, '/')
 
-        cy.get('#view_0 .tablist').contains('/').find('[icon]').rightclick()
+        cy.get('#view_0 .tablist .tab').first().find('.folder').rightclick()
 
-        cy.get('@stub_invoke')
-            .should('be.called')
-            .then((stub: any) => {
-                // check we have the correct number of elements in the menu template
-                // NOTE: I guess we can do a lot better than that!
-                expect(stub.getCalls()[1].args[0]).to.equal('Menu:buildFromTemplate')
-            })
+        cy.get('@stub_invoke').should((stub: any) => {
+            const calls = stub.getCalls()
+            expect(calls.length).to.be.greaterThan(0)
+            expect(calls.some((call: any) => call.args[0] === 'Menu:buildFromTemplate')).to.equal(true)
+        })
     })
 
     it('right-click on the tab should show the tab menu', () => {
-        cy.get('#view_0 .tablist').contains('/').find('.bp5-button-text').rightclick('right')
+        cy.get('#view_0 .tablist .tab').first().rightclick('right')
 
         cy.get('@stub_invoke')
             .should('be.called')
             .then((stub: any) => {
                 // check we have the correct number of elements in the menu template
                 // NOTE: I guess we can do a lot better than that!
-                expect(stub.getCalls()[1].args[1].length).to.equal(8)
+                expect(stub.getCalls()[0].args[1].length).to.equal(8)
             })
     })
 

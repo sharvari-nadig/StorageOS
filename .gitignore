@@ -6,3 +6,5 @@ build/
 e2e/build-e2e/
 e2e/cypress/screenshots/
 public
+
+e2e/cypress/videos/

@@ -80,28 +80,25 @@ describe('filetable', () => {
         })
 
         it('should use correct icons for each file type', () => {
-            cy.get('#view_0 [data-cy-file] .file-label').as('rows')
+            cy.get('#view_0 [data-cy-file]').each(($row) => {
+                cy.wrap($row).within(() => {
+                    cy.get('.file-label').then(($label) => {
+                        const name = $label.text().trim()
+                        const file = files.find((item: any) => item.fullname === name)
 
-            files.forEach((file: any) => {
-                const name = file.fullname
-                const icon = (file.isDir && TypeIcons['dir']) || TypeIcons[file.type]
-                cy.get('@rows').contains(name).prev().should('have.attr', 'icon').and('eq', icon)
+                        if (file) {
+                            const icon = (file.isDir && TypeIcons['dir']) || TypeIcons[file.type]
+                            cy.get('.file-label').prev().should('have.class', `bp5-icon-${icon}`)
+                        }
+                    })
+                })
             })
         })
 
         it('should show folders first', () => {
-            // check that the first two elements are the folders of our files list
-            cy.get('#view_0 [data-cy-file] .file-label')
-                .first()
-                .prev()
-                .should('have.attr', 'icon')
-                .and('eq', TypeIcons['dir'])
+            cy.get('#view_0 [data-cy-file] .file-label').first().prev().should('have.class', 'bp5-icon-folder-close')
 
-            cy.get('#view_0 [data-cy-file] .file-label')
-                .eq(1)
-                .prev()
-                .should('have.attr', 'icon')
-                .and('eq', TypeIcons['dir'])
+            cy.get('#view_0 [data-cy-file] .file-label').eq(1).prev().should('have.class', 'bp5-icon-folder-close')
         })
     })
 

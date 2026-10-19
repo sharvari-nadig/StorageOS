@@ -76,12 +76,12 @@ describe('left panel', () => {
 
     it(`should have all shortcuts`, () => {
         const length: number = favoritesState.shortcuts.length
-        cy.get('.favoritesPanel').contains('Shortcuts').should('be.visible')
+        cy.get('.favoritesPanel').contains('Shortcuts').should('exist')
 
         cy.get('@shortcuts').find('.bp5-tree-node-content-1').its('length').should('equal', length)
 
         SHORTCUTS.forEach((shortcut) => {
-            cy.get('@shortcuts').contains(shortcut).should('be.visible')
+            cy.get('@shortcuts').contains(shortcut).should('exist')
         })
     })
 

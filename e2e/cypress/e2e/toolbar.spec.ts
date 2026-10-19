@@ -37,7 +37,7 @@ describe('toolbar', () => {
         createStubs()
         // load files
         cy.CDAndList(0, '/')
-        cy.get('#view_0 [data-cy-path]').invoke('val', '/').focus()
+        cy.get('#view_0 [data-cy-path]').focus()
     })
 
     it('nav buttons should be disabled', () => {
