@@ -149,7 +149,7 @@ export function triggerFakeCombo(combo: string, data = { title: 'hey!' }) {
 export function enterPath(path: string, viewId = 0, pressEnter = true) {
     return cy
         .get(`#view_${viewId} [data-cy-path]`)
-        .type(path + pressEnter ? '{enter}' : '')
+        .type(path + (pressEnter ? '{enter}' : ''))
         .focus()
         .blur()
 }
