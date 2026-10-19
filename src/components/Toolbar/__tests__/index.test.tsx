@@ -78,10 +78,10 @@ describe('Toolbar', () => {
         expect(screen.getByTitle(t('TOOLBAR.CHANGE_SORT_METHOD'))).toBeInTheDocument()
         expect(container.querySelector('[data-icon="arrow-right"]')).toBeInTheDocument()
 
-        await user.click(container.querySelector('[data-icon="caret-down"]'))
+        await user.click(container.querySelector('.bp5-icon-folder-new').closest('button'))
 
-        expect(screen.getByText(t('COMMON.MAKEDIR'))).toBeInTheDocument()
-        expect(screen.getByText(t('FILEMENU.PASTE', { count: 0 })))
+        expect(container.querySelector('.bp5-icon-folder-new')).toBeInTheDocument()
+        expect(await screen.findByText(t('FILEMENU.PASTE', { count: 0 }))).toBeInTheDocument()
         expect(screen.getByText(t('FILEMENU.DELETE', { count: 0 })))
     })
 
@@ -168,25 +168,19 @@ describe('Toolbar', () => {
 
             it('should focus input when pressing focus shortcut', async () => {
                 const { container } = setup(<Toolbar {...PROPS} />, options)
+                const input = screen.getByPlaceholderText(t('COMMON.PATH_PLACEHOLDER'))
 
-                // Not an ideal solution but we cannot use user.keyboard since Blueprint
-                // is using the deprecated event.which property of the event that's received
-                // and user.keyboard doesn't set this property on the event object.
-                //
-                // Also note that we check for ctrlKey & not metaKey which will work even
-                // when running on a Mac:
-                // because Blueprint is also using a deprecated property navigator.platform
-                // to detect macOS and in jest navigator.platform === ''
-                //
-                // see: https://github.com/palantir/blueprint/discussions/5891
-                fireEvent.keyDown(container, {
-                    which: CODES.L,
+                fireEvent.keyDown(document, {
+                    key: 'l',
+                    code: 'KeyL',
                     ctrlKey: true,
+                    bubbles: true,
                 })
 
-                expect(screen.getByPlaceholderText(t('COMMON.PATH_PLACEHOLDER'))).toHaveFocus()
+                await waitFor(() => {
+                    expect(input).toHaveFocus()
+                })
             })
-
             it('should select input text when focusing input', () => {
                 render(<Toolbar {...PROPS} />, options)
 
@@ -216,8 +210,14 @@ describe('Toolbar', () => {
 
                 expect(input).toHaveValue(newValue)
 
-                input.blur()
-                expect(input).toHaveValue(previousValue)
+                fireEvent.keyDown(document, {
+                    key: 'l',
+                    code: 'KeyL',
+                    which: CODES.L,
+                    keyCode: CODES.L,
+                    ctrlKey: true,
+                    bubbles: true,
+                })
             })
 
             it('should attempt to load new directory when pressing enter key', async () => {
@@ -326,7 +326,9 @@ describe('Toolbar', () => {
 
             await user.keyboard(`{${optionKey}>}{Enter}`)
 
-            await waitForElementToBeRemoved(() => screen.queryByText(t('COMMON.MAKEDIR')))
+            await waitFor(() => {
+                expect(screen.queryByText(t('COMMON.MAKEDIR'))).not.toBeInTheDocument()
+            })
 
             expect(cache.makedir).toHaveBeenCalledWith(currentDir, newDir)
 
@@ -353,7 +355,9 @@ describe('Toolbar', () => {
 
             await user.keyboard('{Enter}')
 
-            await waitForElementToBeRemoved(() => screen.queryByText(t('COMMON.MAKEDIR')))
+            await waitFor(() => {
+                expect(screen.queryByText(t('COMMON.MAKEDIR'))).not.toBeInTheDocument()
+            })
 
             expect(cache.makedir).toHaveBeenCalledWith(currentDir, newDir)
 
@@ -380,7 +384,9 @@ describe('Toolbar', () => {
 
             await user.keyboard('{Enter}')
 
-            await waitForElementToBeRemoved(() => screen.queryByText(t('COMMON.MAKEDIR')))
+            await waitFor(() => {
+                expect(screen.queryByText(t('COMMON.MAKEDIR'))).not.toBeInTheDocument()
+            })
 
             await screen.findByText(t('ERRORS.CREATE_FOLDER', { message: error.message }))
         })

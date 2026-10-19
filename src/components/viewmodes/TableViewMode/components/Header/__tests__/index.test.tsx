@@ -14,13 +14,13 @@ describe('SortIndicator', () => {
     it("should display empty element when sort is 'asc'", () => {
         const { container } = render(<SortIndicator sort="asc" />)
 
-        expect(container.querySelector(`[icon="caret-up"]`)).toBeInTheDocument()
+        expect(container.querySelector('.bp5-icon-caret-up')).toBeInTheDocument()
     })
 
     it("should display empty element when sort is 'desc'", () => {
         const { container } = render(<SortIndicator sort="desc" />)
 
-        expect(container.querySelector(`[icon="caret-down"]`)).toBeInTheDocument()
+        expect(container.querySelector('.bp5-icon-caret-down')).toBeInTheDocument()
     })
 })
 
