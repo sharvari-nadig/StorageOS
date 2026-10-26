@@ -304,7 +304,9 @@ describe('Toolbar', () => {
 
             await user.click(screen.getByText(t('COMMON.CANCEL')))
 
-            await waitForElementToBeRemoved(() => screen.queryByText(t('COMMON.MAKEDIR')))
+            await waitFor(() => {
+                expect(screen.queryByText(t('COMMON.MAKEDIR'))).not.toBeInTheDocument()
+            })
         })
 
         it('should attempt to create & read dir when validating a new folder', async () => {

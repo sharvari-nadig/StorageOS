@@ -21,13 +21,13 @@ describe('Placeholder', () => {
         const { container } = render(<Placeholder {...PROPS} status="ok" />)
 
         expect(screen.getByText(t('COMMON.EMPTY_FOLDER'))).toBeInTheDocument()
-        expect(container.querySelector(`[icon="tick-circle"]`)).toBeInTheDocument()
+        expect(container.querySelector('.bp5-icon-tick-circle')).toBeInTheDocument()
     })
 
     it('should display error placeholder', () => {
         const { container } = render(<Placeholder {...PROPS} error={true} status="ok" />)
 
         expect(screen.getByText(t('COMMON.NO_SUCH_FOLDER'))).toBeInTheDocument()
-        expect(container.querySelector(`[icon="warning-sign"]`)).toBeInTheDocument()
+        expect(container.querySelector('.bp5-icon-warning-sign')).toBeInTheDocument()
     })
 })

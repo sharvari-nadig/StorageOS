@@ -83,7 +83,7 @@ describe('LeftPanel', () => {
 
             await user.click(screen.getByText(USERNAME))
 
-            expect(screen.getByText(`${message} (${code})`)).toBeInTheDocument()
+            expect(await screen.findByText(`${message} (${code})`)).toBeInTheDocument()
         })
 
         it('should collapse tree when clicking on root label', async () => {

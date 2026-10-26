@@ -68,11 +68,10 @@ describe('TabList', () => {
     describe('actions', () => {
         it('should add a new tab when clicking on add button', async () => {
             const { user } = setup(<TabList />, options)
-
             await user.click(screen.getByTitle(t('TABS.NEW')))
-
             // we have two items
-            const items = screen.getAllByRole('button', { name: 'virtual' })
+
+            const items = document.querySelectorAll<HTMLElement>('.tablist button.tab')
             expect(items.length).toBe(2)
 
             // the new tab is activated and the first one became inactive
@@ -85,7 +84,7 @@ describe('TabList', () => {
 
             await user.click(screen.getByTitle(t('TABS.NEW')))
 
-            const secondTab = screen.getAllByRole('button', { name: 'virtual' })[1]
+            const secondTab = document.querySelectorAll<HTMLElement>('.tablist button.tab')[1]
             await user.hover(secondTab)
 
             await user.click(within(secondTab).queryByTitle(t('TABS.CLOSE')))
@@ -100,7 +99,7 @@ describe('TabList', () => {
 
             await user.click(screen.getByTitle(t('TABS.NEW')))
 
-            const items = screen.getAllByRole('button', { name: 'virtual' })
+            const items = document.querySelectorAll<HTMLElement>('.tablist button.tab')
 
             expect(!isSelected(items[0]))
             expect(isSelected(items[1]))
@@ -118,7 +117,7 @@ describe('TabList', () => {
                 .getVisibleCache()
                 .openDirectory({ dir: '/virtual/dir1', fullname: '' })
 
-            expect(screen.getByText('dir1')).toBeInTheDocument()
+            expect(await screen.findByText('dir1')).toBeInTheDocument()
         })
 
         it('should show an error icon when cache.error is true', () => {

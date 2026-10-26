@@ -12,6 +12,12 @@ describe('Nav', () => {
         },
     }
 
+    const setActiveSection = jest.fn()
+
+    const renderNav = () => render(<Nav setActiveSection={setActiveSection} />, options)
+
+    const setupNav = () => setup(<Nav setActiveSection={setActiveSection} />, options)
+
     beforeEach(async () => {
         const appState = new AppState()
         options.providerProps.appState = appState
@@ -24,9 +30,11 @@ describe('Nav', () => {
     })
 
     it('should display nav', () => {
-        const { container } = render(<Nav />, options)
+        const { container } = renderNav()
 
-        expect(screen.getByText(t('APP_MENUS.ABOUT_TITLE'))).toBeInTheDocument()
+        expect(screen.getByText('StorageOS')).toBeInTheDocument()
+        expect(screen.getByRole('button', { name: 'Dashboard' })).toBeInTheDocument()
+        expect(screen.getByRole('button', { name: 'Analyze' })).toBeInTheDocument()
 
         const explorerButton = screen.getByRole('button', { name: t('NAV.EXPLORER') })
         expect(explorerButton).toBeInTheDocument()
@@ -46,22 +54,28 @@ describe('Nav', () => {
     it('should render badge', () => {
         // simulate 10 running transfers so that the badge is displayed
         jest.spyOn(options.providerProps.appState.transferListState, 'getRunningTransfers').mockReturnValue(10)
-        render(<Nav />, options)
+        renderNav()
 
         expect(screen.getByText('10')).toBeInTheDocument()
     })
 
     describe('actions', () => {
-        it('should open hamburger menu when clicking on hamburger', async () => {
-            const { user } = setup(<Nav />, options)
+        it('should switch to transfers when clicking on transfers button', async () => {
+            const { user } = setupNav()
 
-            await user.click(screen.getByRole('button', { name: t('NAV.TRANSFERS') }))
+            const transfersButton = screen.getByRole('button', {
+                name: t('NAV.TRANSFERS'),
+            })
+
+            await user.click(transfersButton)
 
             expect(options.providerProps.appState.toggleExplorerTab).toHaveBeenCalledWith(false)
+            expect(isSelected(transfersButton)).toBe(true)
+            expect(setActiveSection).toHaveBeenCalledWith('dashboard')
         })
 
         it('should show downloads when clicking on downloads button and show explorer when clicking on explorer button', async () => {
-            const { user } = setup(<Nav />, options)
+            const { user } = setupNav()
 
             const transfersButton = screen.getByRole('button', { name: t('NAV.TRANSFERS') })
             const explorerButton = screen.getByRole('button', { name: t('NAV.EXPLORER') })
@@ -69,17 +83,20 @@ describe('Nav', () => {
             await user.click(transfersButton)
 
             expect(options.providerProps.appState.toggleExplorerTab).toHaveBeenCalledWith(false)
+            expect(setActiveSection).toHaveBeenCalledWith('dashboard')
             expect(isSelected(explorerButton)).toBe(false)
             expect(isSelected(transfersButton)).toBe(true)
 
             await user.click(explorerButton)
+
             expect(options.providerProps.appState.toggleExplorerTab).toHaveBeenCalledWith(true)
+            expect(setActiveSection).toHaveBeenCalledWith('dashboard')
             expect(isSelected(explorerButton)).toBe(true)
             expect(isSelected(transfersButton)).toBe(false)
         })
 
         it('should toggle splitview when clicking on splitview button', async () => {
-            const { user, container } = setup(<Nav />, options)
+            const { user, container } = setupNav()
 
             const splitViewButton = container.querySelector('[data-icon="panel-stats"]')
             await user.click(splitViewButton)

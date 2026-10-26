@@ -1,5 +1,5 @@
 import React from 'react'
-import { screen, render } from 'rtl'
+import { screen, render, act } from 'rtl'
 import { Overlay } from '../Overlay'
 
 describe('Overlay', () => {
@@ -71,7 +71,9 @@ describe('Overlay', () => {
             )
             expect(container.firstChild).not.toHaveClass('active')
 
-            jest.runOnlyPendingTimers()
+            act(() => {
+                jest.runOnlyPendingTimers()
+            })
             expect(container.firstChild).toHaveClass('active')
 
             // disable it
@@ -89,7 +91,9 @@ describe('Overlay', () => {
             )
 
             expect(container.firstChild).not.toHaveClass('active')
-            jest.runOnlyPendingTimers()
+            act(() => {
+                jest.runOnlyPendingTimers()
+            })
             expect(container.firstChild).toHaveClass('active')
         })
 

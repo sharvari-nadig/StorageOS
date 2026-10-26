@@ -1,11 +1,11 @@
 import React from 'react'
-
 import { screen, setup, render, t, waitFor } from 'rtl'
 import { ViewState } from '$src/state/viewState'
 
 import { FileView } from '../FileView'
 import { SettingsState } from '$src/state/settingsState'
 import { AppState } from '$src/state/appState'
+import { runInAction } from 'mobx'
 
 describe('FileView', () => {
     const options = {
@@ -23,7 +23,10 @@ describe('FileView', () => {
         providerProps.settingsState = appState.settingsState
         await options.providerProps.appState.loadSettingsAndPrepareViews()
         providerProps.viewState = appState.winStates[0].activeView
-        await waitFor(() => expect(providerProps.viewState.getVisibleCache().status).toBe('ok'))
+        await waitFor(() => {
+            expect(providerProps.viewState.getVisibleCache().status).toBe('ok')
+            expect(providerProps.viewState.getVisibleCache().files).toHaveLength(4)
+        })
         jest.clearAllMocks()
     })
 
@@ -108,8 +111,14 @@ describe('FileView', () => {
             expect(cache.selected.length).toBe(1)
 
             // clear file list so that it's easier to click on a blank area
-            cache.files.clear()
-            cache.allFiles.clear()
+            runInAction(() => {
+                cache.files.clear()
+                cache.allFiles.clear()
+            })
+
+            await waitFor(() => {
+                expect(screen.getByText(t('COMMON.EMPTY_FOLDER'))).toBeInTheDocument()
+            })
 
             await user.click(screen.getByText(t('COMMON.EMPTY_FOLDER')))
 
@@ -123,7 +132,7 @@ describe('FileView', () => {
             const file = cache.files[0]
             const { user } = setup(<FileView hide={false} />, options)
 
-            jest.spyOn(appState, 'openDirectory')
+            jest.spyOn(appState, 'openDirectory').mockImplementation(() => undefined)
 
             await user.dblClick(screen.getByText(file.fullname))
 

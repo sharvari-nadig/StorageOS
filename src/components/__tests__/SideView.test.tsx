@@ -1,6 +1,5 @@
 import React from 'react'
-
-import { render, screen, vol, t, waitFor, wait } from 'rtl'
+import { render, screen, vol, t, waitFor, wait, act } from 'rtl'
 import { ViewState } from '$src/state/viewState'
 import { AppState } from '$src/state/appState'
 import { filterFiles, filterDirs } from '$src/utils/fileUtils'
@@ -48,7 +47,7 @@ describe('SideView', () => {
         expect(screen.getByText('virtual')).toBeInTheDocument()
 
         // toolbar
-        expect(screen.getByDisplayValue('/virtual')).toBeInTheDocument()
+        expect(screen.getByDisplayValue('C:\\virtual')).toBeInTheDocument()
 
         // files loader
         expect(screen.getByTestId('files-loader-0')).toBeInTheDocument()
@@ -72,25 +71,34 @@ describe('SideView', () => {
     // does work since we now have a delay before the loader is displayed
     // FIXME: find a way to test this feature that's not too hacky
     it('should show files loader when files are being loaded then hide it', async () => {
-        render(<SideView {...PROPS} />, options)
-
-        const loader = screen.getByTestId('files-loader-0')
-        const cache = PROPS.viewState.getVisibleCache()
-
-        // Enable fake timers & simulate busy status:
-        // we have to do that because the loader will only appear
-        // if the cache stays busy long enough.
         jest.useFakeTimers()
-        cache.setStatus('busy')
-        // run overlay timer so that the active class is applied
-        jest.runOnlyPendingTimers()
-        expect(loader.classList.contains('active')).toBe(true)
 
-        // check that busy is removed after the cache returns to 'ok' status
-        cache.setStatus('ok')
-        expect(loader.classList.contains('active')).toBe(false)
+        try {
+            render(<SideView {...PROPS} />, options)
 
-        jest.useRealTimers()
+            const loader = screen.getByTestId('files-loader-0')
+            const cache = PROPS.viewState.getVisibleCache()
+
+            act(() => {
+                cache.setStatus('busy')
+            })
+
+            expect(jest.getTimerCount()).toBeGreaterThan(0)
+
+            act(() => {
+                jest.advanceTimersByTime(200)
+            })
+
+            expect(loader.classList.contains('active')).toBe(true)
+
+            act(() => {
+                cache.setStatus('ok')
+            })
+
+            expect(loader.classList.contains('active')).toBe(false)
+        } finally {
+            jest.useRealTimers()
+        }
     })
 
     it('should hide sideview if hide prop is true', () => {

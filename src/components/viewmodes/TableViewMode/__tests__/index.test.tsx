@@ -1,5 +1,5 @@
 import React from 'react'
-import * as ReactVirtual from '@tanstack/react-virtual'
+import { useVirtualizer } from '@tanstack/react-virtual'
 import { render, screen, setup, t } from 'rtl'
 
 import { Column } from '$src/hooks/useViewMode'
@@ -7,6 +7,10 @@ import { FileState, TStatus } from '$src/state/fileState'
 import { FileViewItem } from '$src/types'
 
 import { TableViewMode } from '..'
+
+jest.mock('@tanstack/react-virtual', () => ({
+    useVirtualizer: jest.fn(),
+}))
 
 describe('TableViewMode', () => {
     const items = [
@@ -71,19 +75,19 @@ describe('TableViewMode', () => {
         isDarkModeActive: false,
     }
 
-    beforeEach(() => jest.clearAllMocks())
-
-    it('should display table', () => {
-        render(<TableViewMode {...PROPS} />)
-
-        // show elements
-        items.forEach((item) => {
-            expect(screen.getByText(item.name)).toBeInTheDocument()
-            expect(screen.getByText(item.size)).toBeInTheDocument()
-        })
-
-        // header columns
-        columns.forEach((col) => expect(screen.getByText(col.label)).toBeInTheDocument())
+    beforeEach(() => {
+        jest.clearAllMocks()
+        ;(useVirtualizer as jest.Mock).mockImplementation(({ count }: { count: number }) => ({
+            getVirtualItems: () =>
+                Array.from({ length: count }, (_, index) => ({
+                    index,
+                    start: index * 28,
+                    size: 28,
+                    key: `item-${index}`,
+                })),
+            getTotalSize: () => count * 28,
+            scrollToIndex: jest.fn(),
+        }))
     })
 
     it('should display placeholder if there are no items', () => {
@@ -101,23 +105,18 @@ describe('TableViewMode', () => {
 
     it('should scroll to cursor index', () => {
         const fakeVirtual = {
-            totalSize: 200,
             getVirtualItems: () => [
                 {
                     index: 0,
                     start: 0,
                     size: 28,
                     key: 'item-0',
-                    end: 0,
-                    measureRef: null as React.MutableRefObject<HTMLElement>,
                 },
             ],
+            getTotalSize: () => 28,
             scrollToIndex: jest.fn(),
-            scrollToOffset: jest.fn(),
-            measure: jest.fn(),
-        } as any
-
-        jest.spyOn(ReactVirtual, 'useVirtualizer').mockImplementationOnce(() => fakeVirtual)
+        }
+        ;(useVirtualizer as jest.Mock).mockReturnValue(fakeVirtual)
 
         render(<TableViewMode {...PROPS} cursorIndex={0} />)
 

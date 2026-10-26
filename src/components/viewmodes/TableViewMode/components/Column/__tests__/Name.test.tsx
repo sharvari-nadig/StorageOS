@@ -30,7 +30,7 @@ describe('Name', () => {
         expect(screen.getByTitle(item.title)).toBeInTheDocument()
 
         // item.icon is used
-        expect(container.querySelector(`[icon="${item.icon}"]`)).toBeInTheDocument()
+        expect(container.querySelector(`.bp5-icon-${item.icon}`)).toBeInTheDocument()
     })
 
     describe('start edit mode', () => {
