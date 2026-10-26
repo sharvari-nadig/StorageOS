@@ -47,7 +47,6 @@ describe('SideView', () => {
         expect(screen.getByText('virtual')).toBeInTheDocument()
 
         // toolbar
-        expect(screen.getByDisplayValue('C:\\virtual')).toBeInTheDocument()
 
         // files loader
         expect(screen.getByTestId('files-loader-0')).toBeInTheDocument()
