@@ -59,6 +59,7 @@ const App = observer(() => {
     const [isExitDialogOpen, setIsExitDialogOpen] = useState(false)
     const [activeSection, setActiveSection] = useState<AppSection>('dashboard')
     const [showDuplicates, setShowDuplicates] = useState(false)
+    const [showTransfers, setShowTransfers] = useState(false)
     const [duplicateGroups, setDuplicateGroups] = useState<DuplicateGroup[]>([])
     const [duplicateLoading, setDuplicateLoading] = useState(false)
     const [duplicateProgress, setDuplicateProgress] = useState<DuplicateScanProgress>({
@@ -472,7 +473,12 @@ const App = observer(() => {
                     activeSection={activeSection === 'analyze' ? 'analyze' : 'dashboard'}
                     setActiveSection={(section: 'dashboard' | 'analyze') => {
                         setShowDuplicates(false)
+                        setShowTransfers(false)
                         setActiveSection(section)
+                    }}
+                    onTransfersClick={() => {
+                        setShowDuplicates(false)
+                        setShowTransfers(true)
                     }}
                 />
 
@@ -484,53 +490,69 @@ const App = observer(() => {
                         overflow: 'hidden',
                     }}
                 >
-                    <div
-                        style={{
-                            display: 'flex',
-                            alignItems: 'center',
-                            gap: 10,
-                            padding: '8px 16px',
-                            borderBottom: '1px solid #d8dee5',
-                            flexShrink: 0,
-                            flexWrap: 'wrap',
-                        }}
-                    >
-                        <button
-                            onClick={() => {
-                                setShowDuplicates(false)
-                                setActiveSection('dashboard')
-                            }}
-                            style={navButtonStyle(!showDuplicates && activeSection === 'dashboard')}
-                        >
-                            Dashboard
-                        </button>
-                        <button
-                            onClick={() => {
-                                setShowDuplicates(false)
-                                setActiveSection('analyze')
-                            }}
-                            style={navButtonStyle(!showDuplicates && activeSection === 'analyze')}
-                        >
-                            Analyze
-                        </button>
-                        <button
-                            onClick={() => {
-                                setShowDuplicates(false)
-                                setActiveSection('assistant')
-                            }}
-                            style={navButtonStyle(!showDuplicates && activeSection === 'assistant')}
-                        >
-                            AI Assistant
-                        </button>
-                        <button onClick={() => setShowDuplicates(true)} style={navButtonStyle(showDuplicates)}>
-                            Duplicate Files
-                        </button>
-                    </div>
-
-                    {!showDuplicates && (
+                    {!isExplorer && !showTransfers && (
                         <div
                             style={{
-                                flex: '0 0 60%',
+                                display: 'flex',
+                                alignItems: 'center',
+                                gap: 10,
+                                padding: '8px 16px',
+                                borderBottom: '1px solid #d8dee5',
+                                flexShrink: 0,
+                                flexWrap: 'wrap',
+                            }}
+                        >
+                            <button
+                                onClick={() => {
+                                    setShowTransfers(false)
+                                    appState.toggleExplorerTab(false)
+                                    setShowDuplicates(false)
+                                    setActiveSection('dashboard')
+                                }}
+                                style={navButtonStyle(!showDuplicates && activeSection === 'dashboard')}
+                            >
+                                Dashboard
+                            </button>
+                            <button
+                                onClick={() => {
+                                    setShowTransfers(false)
+                                    appState.toggleExplorerTab(false)
+                                    setShowDuplicates(false)
+                                    setActiveSection('analyze')
+                                }}
+                                style={navButtonStyle(!showDuplicates && activeSection === 'analyze')}
+                            >
+                                Analyze
+                            </button>
+                            <button
+                                onClick={() => {
+                                    setShowTransfers(false)
+                                    appState.toggleExplorerTab(false)
+                                    setShowDuplicates(false)
+                                    setActiveSection('assistant')
+                                }}
+                                style={navButtonStyle(!showDuplicates && activeSection === 'assistant')}
+                            >
+                                AI Assistant
+                            </button>
+
+                            <button
+                                onClick={() => {
+                                    setShowTransfers(false)
+                                    appState.toggleExplorerTab(false)
+                                    setShowDuplicates(true)
+                                }}
+                                style={navButtonStyle(showDuplicates)}
+                            >
+                                Duplicate Files
+                            </button>
+                        </div>
+                    )}
+
+                    {!isExplorer && !showTransfers && !showDuplicates && (
+                        <div
+                            style={{
+                                flex: '1 1 auto',
                                 minHeight: 0,
                                 overflow: 'auto',
                             }}
@@ -541,7 +563,7 @@ const App = observer(() => {
                         </div>
                     )}
 
-                    {showDuplicates && (
+                    {!isExplorer && !showTransfers && showDuplicates && (
                         <div
                             style={{
                                 flex: '1 1 auto',
@@ -827,10 +849,10 @@ const App = observer(() => {
 
                     <div
                         style={{
-                            flex: '0 0 40%',
+                            flex: '1 1 0',
                             minHeight: 0,
                             overflow: 'hidden',
-                            display: showDuplicates ? 'none' : 'block',
+                            display: (isExplorer || showTransfers) && !showDuplicates ? 'block' : 'none',
                         }}
                     >
                         <div
@@ -842,7 +864,7 @@ const App = observer(() => {
                             <LeftPanel hide={!isExplorer} />
                             <SideView viewState={views[0]} hide={!isExplorer} />
                             {splitView && <SideView viewState={views[1]} hide={!isExplorer} />}
-                            <Downloads hide={isExplorer} />
+                            <Downloads hide={!showTransfers || isExplorer} />
                         </div>
                     </div>
                 </div>

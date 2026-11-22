@@ -13,9 +13,12 @@ import { useStores } from '$src/hooks/useStores'
 interface NavProps {
     activeSection?: 'dashboard' | 'analyze'
     setActiveSection?: React.Dispatch<React.SetStateAction<'dashboard' | 'analyze'>>
+    onTransfersClick?: () => void
 }
 
-const Nav = observer(({ activeSection = 'dashboard', setActiveSection }: NavProps) => {
+const Nav = observer((props: NavProps) => {
+    const { activeSection = 'dashboard', setActiveSection, onTransfersClick: handleTransfersClick } = props
+
     const { appState } = useStores('appState')
     const { transferListState } = appState
     const { t } = useTranslation()
@@ -30,19 +33,13 @@ const Nav = observer(({ activeSection = 'dashboard', setActiveSection }: NavProp
     const isSplitViewActive = appState.winStates[0].splitView
 
     const onExplorerClick = (): void => {
-        setActiveSection('dashboard')
-
-        if (!appState.isExplorer) {
-            appState.toggleExplorerTab(true)
-        }
+        setActiveSection?.('dashboard')
+        appState.toggleExplorerTab(true)
     }
-
     const onTransfersClick = (): void => {
-        setActiveSection('dashboard')
-
-        if (appState.isExplorer) {
-            appState.toggleExplorerTab(false)
-        }
+        setActiveSection?.('dashboard')
+        appState.toggleExplorerTab(false)
+        handleTransfersClick?.()
     }
 
     const onToggleSplitView = (): void => appState.isExplorer && appState.toggleSplitViewMode()
@@ -60,10 +57,8 @@ const Nav = observer(({ activeSection = 'dashboard', setActiveSection }: NavProp
                     icon="dashboard"
                     text="Dashboard"
                     onClick={() => {
-                        setActiveSection('dashboard')
-                        if (!appState.isExplorer) {
-                            appState.toggleExplorerTab(true)
-                        }
+                        setActiveSection?.('dashboard')
+                        appState.toggleExplorerTab(false)
                     }}
                     intent={activeSection === 'dashboard' ? Intent.PRIMARY : 'none'}
                 />
@@ -74,10 +69,8 @@ const Nav = observer(({ activeSection = 'dashboard', setActiveSection }: NavProp
                     icon="chart"
                     text="Analyze"
                     onClick={() => {
-                        setActiveSection('analyze')
-                        if (!appState.isExplorer) {
-                            appState.toggleExplorerTab(true)
-                        }
+                        setActiveSection?.('analyze')
+                        appState.toggleExplorerTab(false)
                     }}
                     intent={activeSection === 'analyze' ? Intent.PRIMARY : 'none'}
                 />
@@ -102,7 +95,6 @@ const Nav = observer(({ activeSection = 'dashboard', setActiveSection }: NavProp
                     intent={!isExplorer ? Intent.PRIMARY : 'none'}
                 >
                     {t('NAV.TRANSFERS')}
-
                     <Badge intent="none" text={badgeText} progress={badgeProgress} />
                 </Button>
             </Navbar.Group>
